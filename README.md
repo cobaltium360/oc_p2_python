@@ -17,7 +17,7 @@ activate
 ```sh
 env\Scripts\activate.bat (on windows cmd)
 env\Scripts\activate.ps1 (on windows powershell)
-source bin/activate (on linux/mac)
+source env/bin/activate (on linux/mac)
 ```
 install requirements
 ```sh
