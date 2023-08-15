@@ -222,6 +222,7 @@ def main():
         get_links_product(url)
         for link in product_url:
             get_element_page(link)
+        green("downloading data...")
         download_category()
         dowload_images()
         number = len(product_url)
