@@ -151,11 +151,39 @@ def remove_jpg():
         file_path = os.path.join(path, jpg)
         os.remove(file_path)
 
+def remove_csv():
+    path = './data/'
+    files = os.listdir(path)
+    csv_files = []
+    for file in files:
+        if file.lower().endswith(".csv"):
+            csv_files.append(file)
+    for csv in csv_files:
+        file_path = os.path.join(path, csv)
+        os.remove(file_path)
+
 def create_folder():
     if not os.path.exists("./images/"):
         os.makedirs("./images/")
         green("Folder images created !")
+    if not os.path.exists("./data/"):
+        os.makedirs("./data/")
+        green("Folder data created !")
 
+def download_category():
+    category_array = []
+    for category in data:
+        name_category = category[7].replace(" ", "_")
+        if name_category not in category_array:
+            category_array.append(name_category)
+    for category in category_array:
+        data_save = []
+        for info in data:
+            name_category = info[7].replace(" ", "_")
+            if category == name_category:
+                data_save.append(info)
+        df = pd.DataFrame(data_save, columns=columns)
+        df.to_csv(f"./data/{category}.csv", index=False)
 
 def main():
     
@@ -172,18 +200,20 @@ def main():
                                                                                   \033[34mby théo.\033[0m    
     """)
     create_folder()
-    img = input("Remove images in folder ? (y or n) : ")
+    img = input("Remove old images? (y or n) : ")
     if img == "y":
         remove_jpg()
-    green("\n1 - Scrap a book\n2 - Scrap books form category\n3 - Scrap all website\n4 - Exit\n")
+    old_data = input("Remove old data ? (y or n) : ")
+    if old_data == "y":
+        remove_csv()
+    green("\n1 - Scrap a book\n2 - Scrap books from category\n3 - Scrap all website\n4 - Exit\n")
     choose = input("Choose options : ")
     
     if choose == "1":
         url = input("Enter url of the book : ")
         get_element_page(url)
+        download_category()
         dowload_images()
-        df = pd.DataFrame(data, columns=columns)
-        df.to_csv("output.csv", index=False)
         green("Done !")
     
     elif choose == "2":
@@ -192,9 +222,8 @@ def main():
         get_links_product(url)
         for link in product_url:
             get_element_page(link)
+        download_category()
         dowload_images()
-        df = pd.DataFrame(data, columns=columns)
-        df.to_csv("output.csv", index=False)
         number = len(product_url)
         green(f"{number} books found !")
     
@@ -205,9 +234,9 @@ def main():
             get_links_product(url)
         for link in product_url:
             get_element_page(link)
+        green("downloading data...")
+        download_category()
         dowload_images()
-        df = pd.DataFrame(data, columns=columns)
-        df.to_csv("output.csv", index=False)
         number = len(product_url)
         green(f"{number} books found !")
 
