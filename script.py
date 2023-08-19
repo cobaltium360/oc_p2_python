@@ -2,7 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 import os
-
+import re
 
 category_url = []
 
@@ -58,12 +58,18 @@ def get_element_page(url):
         price_include_element = soup.find('th', text='Price (incl. tax)')
         if price_include_element:
             price_include_value = price_include_element.find_next_sibling('td').text
+            price_include_value = price_include_value.replace("£", "")
         price_exclude_element = soup.find('th', text='Price (excl. tax)')
         if price_exclude_element:
             price_exclude_value = price_exclude_element.find_next_sibling('td').text
+            price_exclude_value = price_exclude_value.replace("£", "")
         remainning_element = soup.find('th', text='Availability')
         if remainning_element:
             remainning_value = remainning_element.find_next_sibling('td').text
+            pattern = r"In stock \((.+) available\)"
+            matches = re.match(pattern, remainning_value)
+            if matches:
+                remainning_value = int(matches.group(1))
         product_description_div = soup.find('div', id='product_description')
         if product_description_div:
             description = product_description_div.find_next_sibling('p').text
